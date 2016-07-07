@@ -48,13 +48,15 @@ class TestLSTM(unittest.TestCase):
 
         batch = len(x2_data)
         x2 = chainer.Variable(x2_data)
-        h1_in, h1_rest = functions.split_axis(self.link.h.data, [batch], axis=0)
+        h1_in, h1_rest = functions.split_axis(
+            self.link.h.data, [batch], axis=0)
         y2 = self.link(x2)
         c2_expect, y2_expect = \
             functions.lstm(c1_expect,
                            self.link.upward(x2) + self.link.lateral(h1_in))
         gradient_check.assert_allclose(y2.data, y2_expect.data)
-        gradient_check.assert_allclose(self.link.h.data[:batch], y2_expect.data)
+        gradient_check.assert_allclose(
+            self.link.h.data[:batch], y2_expect.data)
         gradient_check.assert_allclose(self.link.h.data[batch:], h1_rest.data)
 
         x3 = chainer.Variable(x3_data)
